@@ -36,17 +36,6 @@ impl HmsTime {
     }
 }
 
-// TODO: Replace uses of this function iwht time.rebalanced()
-fn rebalance_time(hours: u64, minutes: u64, seconds: u64) -> HmsTime {
-    let total_seconds = seconds + (minutes + hours * 60) * 60;
-    let wrapped_seconds = seconds % 60;
-    let total_minutes = (total_seconds - wrapped_seconds) / 60;
-    let wrapped_minutes = total_minutes % 60;
-    let total_hours = (total_minutes - wrapped_minutes) / 60;
-
-    HmsTime { h: total_hours, m: wrapped_minutes, s: wrapped_seconds }
-}
-
 /// Process the arguments given through the command line
 ///
 /// # Errors
@@ -98,8 +87,8 @@ fn process_args(args: Vec<String>) -> Result<HmsTime, &'static str> {
         i += 1;
     }
 
-    // TODO: Replace with time.rebalanced()
-    Ok(rebalance_time(hours, minutes, seconds))
+    let hms_time: HmsTime = HmsTime { h: hours, m: minutes, s: seconds };
+    Ok(hms_time.rebalanced())
 }
 
 fn run_timer_for(tv: HmsTime) {
