@@ -36,35 +36,36 @@ impl HmsTime {
     }
 }
 
-fn rebalance_time(hours: u32, minutes: u32, seconds: u32) -> (u32, u32, u32) {
+// TODO: Replace uses of this function iwht time.rebalanced()
+fn rebalance_time(hours: u64, minutes: u64, seconds: u64) -> HmsTime {
     let total_seconds = seconds + (minutes + hours * 60) * 60;
     let wrapped_seconds = seconds % 60;
     let total_minutes = (total_seconds - wrapped_seconds) / 60;
     let wrapped_minutes = total_minutes % 60;
     let total_hours = (total_minutes - wrapped_minutes) / 60;
 
-    (total_hours, wrapped_minutes, wrapped_seconds)
+    HmsTime { h: total_hours, m: wrapped_minutes, s: wrapped_seconds }
 }
 
 /// Process the arguments given through the command line
 ///
 /// # Errors
 /// The program will error if invalid argument syntax
-fn process_args(args: Vec<String>) -> Result<(u32, u32, u32), &'static str> {
+fn process_args(args: Vec<String>) -> Result<HmsTime, &'static str> {
     if args.len() < 2 {
         return Err("Must provide at least one argument");
     }
 
-    let mut hours: u32 = 0;
-    let mut minutes: u32 = 0;
-    let mut seconds: u32 = 0;
+    let mut hours: u64 = 0;
+    let mut minutes: u64 = 0;
+    let mut seconds: u64 = 0;
 
     let mut i = 1;
     while i < args.len() {
         if args[i].eq("-h") {
             if i < args.len() - 1 {
                 hours += args[i+1]
-                    .parse::<u32>()
+                    .parse::<u64>()
                     .expect("Argument after -h must be a number");
                 i += 1;
             } else {
@@ -73,7 +74,7 @@ fn process_args(args: Vec<String>) -> Result<(u32, u32, u32), &'static str> {
         } else if args[i].eq("-m") {
             if i < args.len() - 1 {
                 minutes += args[i+1]
-                    .parse::<u32>()
+                    .parse::<u64>()
                     .expect("Argument after -m must be a number");
                 i += 1;
             } else {
@@ -82,7 +83,7 @@ fn process_args(args: Vec<String>) -> Result<(u32, u32, u32), &'static str> {
         } else if args[i].eq("-s") {
             if i < args.len() - 1 {
                 seconds += args[i+1]
-                    .parse::<u32>()
+                    .parse::<u64>()
                     .expect("Argument after -s must be a number");
                 i += 1;
             } else {
@@ -90,22 +91,19 @@ fn process_args(args: Vec<String>) -> Result<(u32, u32, u32), &'static str> {
             }
         } else {
             seconds += args[i]
-                .parse::<u32>()
+                .parse::<u64>()
                 .expect("Lone argument must be integer or flag");
         }
 
         i += 1;
     }
 
+    // TODO: Replace with time.rebalanced()
     Ok(rebalance_time(hours, minutes, seconds))
 }
 
-fn time_total_seconds(time: (u32, u32, u32)) -> u32 {
-    time.2 + (time.1 + (time.0 * 60)) * 60
-}
-
-fn run_timer_for(tv: (u32, u32, u32)) {
-    let totes: u64 = time_total_seconds(tv).into();
+fn run_timer_for(tv: HmsTime) {
+    let totes: u64 = tv.total_seconds();
     let init_time = Instant::now();
 
     while init_time.elapsed().as_secs() < totes {
@@ -138,7 +136,7 @@ fn main() {
         }
     };
 
-    println!("Starting timer for {}h {}m {}s for a total of {}s", time_value.0, time_value.1, time_value.2, time_total_seconds(time_value));
+    println!("Starting timer for {}h {}m {}s for a total of {}s", time_value.h, time_value.m, time_value.s, time_value.total_seconds());
 
 
     run_timer_for(time_value);
