@@ -150,11 +150,16 @@ processed_args_t process_args(int argc, char* argv[]) {
   return result;
 }
 
+void print_usage() {
+  printf("Usage:\n  ptimer <seconds>\n  ptimer -h <hours> -m <minutes> -s <seconds>\n  ptimer --hours <hours> --minutes <minutes> --seconds <seconds>\n");
+}
+
 int main(int argc, char* argv[]) {
   processed_args_t pargs = process_args(argc, argv);
 
   if(pargs.status != 0) {
     printf("Could not process arguments\n");
+    print_usage();
     return 1;
   } else {
     printf("Starting timer for %02dh %02dm %02ds\n", pargs.hours, pargs.minutes, pargs.seconds);
@@ -173,6 +178,7 @@ int main(int argc, char* argv[]) {
     printf("\r%02dm %ds      ", minutes, seconds);
     usleep(500);
   }
+
   printf("\n");
 
   // Bring back the cursor
