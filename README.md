@@ -1,6 +1,56 @@
 # ptimer
 A simple command-line timer application.
 
+## Installation
+
+There are 2 main versions of the program: the C version and the Rust vesrion.
+The C version is the original version and is not currently being updated or
+supported further. The Rust vesrion is the newest and greatest version of the
+program, and is therefore the recommended version.
+
+### Rust Version
+
+The Rust version can be built either manually using cargo, or using the `make`
+command from the Makefile in the base of the repository.
+
+#### Makefile
+
+From the base of the repository just type the command:
+```
+make rust_build
+```
+
+The resulting executable will be in __`./build/ptimer`__.
+
+There is another make task called `install_rust_bin`, which simply copies the
+resulting binary to `/usr/local/bin/ptimer`. It is not recommended to run this
+make task without first knowing that that is exactly where you want it.
+
+#### Cargo
+
+To build and run the program, navigate to `[repo_root]/rust_version/ptimer` and
+run the appropriate cargo command. If you are unfamiliar with cargo, this
+is probably:
+```
+cargo run -- [ put arguments here ]
+```
+
+### C Version (Deprecated)
+
+To build the C version of the program run the following command:
+```
+make ptimer
+```
+
+and the run use:
+```
+./build/ptimer
+```
+
+There is another make task called `install_bin`, which simple copies the
+resulting binary to `/usr/local/bin/ptimer`. It is not recommended to run this
+make task without first knowing that that is exactly where you want it.
+
 ## Usage
 
 The general structure will look something like this:
