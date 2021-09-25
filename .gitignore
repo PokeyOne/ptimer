@@ -4,3 +4,4 @@ build
 *.gch
 target
 .#*
+.DS_Store
