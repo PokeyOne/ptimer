@@ -20,7 +20,6 @@ digit ::= (0-9)+
 
 ### Examples
 
-|---------|--------|
 | command | effect |
 |---------|--------|
 | `ptimer 34` | Timer for 34 seconds |
@@ -28,4 +27,4 @@ digit ::= (0-9)+
 | `ptimer -h 5` | Timer for 5h 0m 0s |
 | `ptimer -h 5 -m 3 -s 5` | Timer for 5h 3m 5s |
 | `ptimer -h 5 -m 3 -s 62` | Timer for 5h 4m 2s |
-|---------|--------|
+
