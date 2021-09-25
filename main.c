@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#include <unistd.h>
 
 typedef struct {
   int hours;
@@ -153,7 +155,28 @@ int main(int argc, char* argv[]) {
 
   if(pargs.status != 0) {
     printf("Could not process arguments\n");
+    return 1;
   } else {
     printf("Starting timer for %02dh %02dm %02ds\n", pargs.hours, pargs.minutes, pargs.seconds);
   }
+
+  int total_seconds = pargs.seconds + pargs.minutes * 60 + pargs.hours * 60 * 60;
+  time_t start_time = time(0);
+
+  // Hide the cursor
+  printf("\e[?25l");
+
+  int seconds_left;
+  while((seconds_left = total_seconds - (time(0) - start_time)) >= 0) {
+    int minutes = (seconds_left - seconds_left%60) / 60;
+    int seconds = seconds_left%60;
+    printf("\r%02dm %ds      ", minutes, seconds);
+    usleep(500);
+  }
+  printf("\n");
+
+  // Bring back the cursor
+  printf("\e[?25h");
+
+  return 0;
 }
