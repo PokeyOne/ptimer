@@ -1,7 +1,7 @@
 # ptimer
 A simple command-line timer application.
 
-## Installation
+## Building from Source
 
 There are 2 main versions of the program: the C version and the Rust vesrion.
 The C version is the original version and is not currently being updated or
