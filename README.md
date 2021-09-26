@@ -67,8 +67,20 @@ then the resulting executable will be in `[repo_root]/target/release/ptimer`
 
 The general structure will look something like this:
 ```bash
-ptimer <time format>
+ptimer <time format> <options>
 ```
+
+Where options and timer format arguments can be intermixed and rearranged
+
+and
+
+Where `<options>` is just a space separated list of standard-format options:
+| option | effect |
+|--------|--------|
+| `--silent` | Will not play a sound after the timer finishes |
+| `--exit-on-stop` | The program will exit when timer has stopped instead of showing a time-since-completed timer |
+
+and
 
 Where `<time format>` follows the following format in ebnf:
 ```text
