@@ -1,6 +1,15 @@
 # ptimer
 A simple command-line timer application.
 
+## License
+
+[See the COPYING file](COPYING)
+
+## Dependencies
+
+ptimer has no runtime dependencies, and the only build dependencies are
+`gcc` for building the C version and Rust for the Rust version.
+
 ## Building from Source
 
 There are 2 main versions of the program: the C version and the Rust vesrion.
