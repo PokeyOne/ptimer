@@ -1,10 +1,3 @@
-ptimer:
-	gcc main.c
-	mv ./a.out ./build/ptimer
-
-install_bin: ptimer
-	cp ./build/ptimer /usr/local/bin/ptimer
-
 rust_build:
 	cd rust_version/ptimer; \
 		cargo build --release; \
@@ -12,3 +5,8 @@ rust_build:
 
 install_rust_bin: rust_build
 	cp ./build/ptimer /usr/local/bin/ptimer
+
+ptimer: rust_build
+
+install_bin: ptimer install_rust_bin
+
