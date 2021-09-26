@@ -4,23 +4,36 @@ use std::thread::sleep;
 use std::io;
 use std::io::Write;
 
-// TODO: use this type in places
+/// A time construct for storing hours, minutes, and seconds as raw integers.
+/// This results in less of a time, but more accurately an inverval.
+///
+/// The struct consists of just three elements: h, m, s. These refer to
+/// hours, minutes, and seconds respectively.
 struct HmsTime {
     h: u64,
     m: u64,
     s: u64
 }
+
 impl HmsTime {
+    /// Create a new HmsTime with the given amount of seconds. These seconds
+    /// will be rebalanced into the appropriate amount of hours, minutes,
+    /// and seconds.
     fn from_seconds(seconds: u64) -> HmsTime {
         let result = HmsTime {h: 0, m: 0, s: seconds};
 
         result.rebalanced()
     }
 
+    /// Using the stored hours, minutes, and seconds, calculates the total
+    /// seconds that this HmsTime represents
     fn total_seconds(&self) -> u64 {
         self.s + (self.m + self.h * 60) * 60
     }
 
+    /// Rebalance all the hours, minutes, and seconds values so that both
+    /// seconds and minutes are less than or equal to 60. Does not check to
+    /// to see if rebalancing is needed.
     fn rebalanced(&self) -> HmsTime {
         let total_seconds = self.total_seconds();
         let wrapped_seconds = total_seconds % 60;
@@ -31,6 +44,7 @@ impl HmsTime {
         HmsTime {h: total_hours, m: wrapped_minutes, s: wrapped_seconds}
     }
 
+    /// Format the time to something similar to "02:02:02"
     fn fmt(&self) -> String {
         format!("{:02}:{:02}:{:02}", self.h, self.m, self.s)
     }
@@ -49,6 +63,9 @@ fn process_args(args: Vec<String>) -> Result<HmsTime, &'static str> {
     let mut minutes: u64 = 0;
     let mut seconds: u64 = 0;
 
+    // Process all the arguments and add hours minutes and seconds as going
+    // along. This is not implemented as a for loop because there are calls
+    // to increment i that are not just the end of the loop.
     let mut i = 1;
     while i < args.len() {
         if args[i].eq("-h") {
@@ -91,6 +108,9 @@ fn process_args(args: Vec<String>) -> Result<HmsTime, &'static str> {
     Ok(hms_time.rebalanced())
 }
 
+/// Given an HmsTime, this function will freeze the program and terminal for
+/// the specified length of time. It will keep the time in the terminal updated
+/// live as it runs by using the special return character.
 fn run_timer_for(tv: HmsTime) {
     let totes: u64 = tv.total_seconds();
     let init_time = Instant::now();
