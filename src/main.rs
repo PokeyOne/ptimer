@@ -1,8 +1,10 @@
 use std::env;
 use std::io;
 use std::io::Write;
+use std::thread;
 use std::thread::sleep;
 use std::time::{Duration, Instant};
+use std::sync::mpsc;
 
 /// A time construct for storing hours, minutes, and seconds as raw integers.
 /// This results in less of a time, but more accurately an inverval.
@@ -139,6 +141,64 @@ fn run_timer_for(tv: HmsTime) {
     println!("done");
 }
 
+/// Shows a timer counting up to the user. This is intended to be the time
+/// since the timer has ended. This state can be exitted by typing q and enter
+/// or just entering a blank line.
+fn show_completed_timer() {
+    let wait_start_time = Instant::now();
+
+    let (tx, rx) = mpsc::channel();
+
+    // Here we spawn another thread that will essentially just monitor for
+    // user input of commands to the program. Currently it just monitors for
+    // the q character or nothing.
+    // We don't assign a value because we never need to join with this thread.
+    let _ = thread::spawn(move || {
+        loop {
+            // Block until can read a line
+            let mut line = String::new();
+            io::stdin().read_line(&mut line)
+                .expect("Could not read line");
+
+            // Trim the newline and any spaces
+            line = line
+                .trim()
+                .to_string();
+
+            // Look for quit command
+            if line.eq("q") || line.eq("") {
+                // Ignore errors because if can't send then we are closing this
+                // thread regardless and the error is almost guaranteed to be
+                // rx not existing. The user can also almost always just C-c
+                match tx.send(true) {
+                    Ok(_) => {},
+                    Err(_) => {}
+                }
+                // This will kill this loop
+                break;
+            }
+        }
+    });
+
+    loop {
+        // Sleep so we aren't updating the screen at unnecessary intervals
+        sleep(Duration::from_millis(500));
+
+        // If the spawned thread sends a message, then we should stop the loop
+        let should_close: bool = match rx.try_recv() {
+            Ok(_) => true,
+            Err(_) => false
+        };
+        if should_close { break; }
+
+        // Print the time on the same line
+        let hms = HmsTime::from_seconds(wait_start_time.elapsed().as_secs());
+        print!("\r Stopped {} ago. Type q to quit:   ", hms.fmt());
+        io::stdout().flush().unwrap();
+    }
+    println!("");
+}
+
 fn main() {
     println!("Please standby while we process your request.");
     println!("An agent will be with you shortly.");
@@ -166,4 +226,6 @@ fn main() {
     );
 
     run_timer_for(time_value);
+
+    show_completed_timer();
 }
