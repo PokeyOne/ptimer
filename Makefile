@@ -1,11 +1,7 @@
-rust_build:
+ptimer:
 	cargo build --release
 	cp target/release/ptimer ./build/ptimer
 
-install_rust_bin: rust_build
+install_bin: ptimer
 	cp ./build/ptimer /usr/local/bin/ptimer
-
-ptimer: rust_build
-
-install_bin: ptimer install_rust_bin
 

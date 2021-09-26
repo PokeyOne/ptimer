@@ -25,10 +25,6 @@ command from the Makefile in the base of the repository.
 
 From the base of the repository just type the command:
 ```
-make rust_build
-```
-or
-```
 make ptimer
 ```
 
@@ -36,7 +32,7 @@ The resulting executable will be in __`./build/ptimer`__. This will be a release
 version of the executable and therefore in development it is recommend that
 you use `cargo run` to test changes.
 
-There is another make task called `install_rust_bin` or simply `install_bin`, which
+There is another make task called `install_bin`, which
 copies the resulting binary to `/usr/local/bin/ptimer`. It is not recommended to
 run this make task without first knowing that that is exactly where you want it.
 
