@@ -90,7 +90,7 @@ Where `<options>` is just a space separated list of standard-format options:
 and
 
 Where `<time format>` follows the following format in ebnf:
-```text
+```ebnf
 time_format ::= time_item+
 time_item ::= ( number | hour_item | minute_item | second_item )
 hour_item ::= "-h " number
