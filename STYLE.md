@@ -8,14 +8,14 @@ run the comand as `cargo +nightly fmt`. You must already have the nightly Rust
 version install using rustup.
 
 For example something like this:
-```
+```rust
 struct Foo {
   foo: u32,
   bar: u32, // bad trailing comma
 }
 ```
 should be replaced with this
-```
+```rust
 struct Foo {
   foo: u32,
   bar: u32 // No trailing comma here
