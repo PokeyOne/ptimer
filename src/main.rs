@@ -1,10 +1,10 @@
 use std::env;
 use std::io;
 use std::io::Write;
+use std::sync::mpsc;
 use std::thread;
 use std::thread::sleep;
 use std::time::{Duration, Instant};
-use std::sync::mpsc;
 
 /// A time construct for storing hours, minutes, and seconds as raw integers.
 /// This results in less of a time, but more accurately an inverval.
@@ -157,13 +157,12 @@ fn show_completed_timer() {
         loop {
             // Block until can read a line
             let mut line = String::new();
-            io::stdin().read_line(&mut line)
+            io::stdin()
+                .read_line(&mut line)
                 .expect("Could not read line");
 
             // Trim the newline and any spaces
-            line = line
-                .trim()
-                .to_string();
+            line = line.trim().to_string();
 
             // Look for quit command
             if line.eq("q") || line.eq("") {
@@ -171,7 +170,7 @@ fn show_completed_timer() {
                 // thread regardless and the error is almost guaranteed to be
                 // rx not existing. The user can also almost always just C-c
                 match tx.send(true) {
-                    Ok(_) => {},
+                    Ok(_) => {}
                     Err(_) => {}
                 }
                 // This will kill this loop
@@ -180,8 +179,10 @@ fn show_completed_timer() {
         }
     });
 
-    println!("Your time has completed. Below is the time since completion. \
-              Enter one of the following commands.");
+    println!(
+        "Your time has completed. Below is the time since completion. \
+              Enter one of the following commands."
+    );
     println!("  (q) - Quit (default)");
     loop {
         // Sleep so we aren't updating the screen at unnecessary intervals
@@ -192,7 +193,9 @@ fn show_completed_timer() {
             Ok(_) => true,
             Err(_) => false
         };
-        if should_close { break; }
+        if should_close {
+            break;
+        }
 
         // Print the time on the same line
         let hms = HmsTime::from_seconds(wait_start_time.elapsed().as_secs());
