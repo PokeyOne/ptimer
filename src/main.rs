@@ -1,3 +1,5 @@
+use rodio::source::{SineWave, Source};
+use rodio::{OutputStream, Sink};
 use std::env;
 use std::io;
 use std::io::Write;
@@ -5,8 +7,6 @@ use std::sync::mpsc;
 use std::thread;
 use std::thread::sleep;
 use std::time::{Duration, Instant};
-use rodio::{OutputStream, Sink};
-use rodio::source::{SineWave, Source};
 
 /// The return result for the process_args function. This contains the actual
 /// time result, plus whether or not other arguments have been passed.
@@ -167,13 +167,11 @@ fn process_args(args: Vec<String>) -> Result<ProcessedArgs, &'static str> {
         s: seconds
     };
 
-    Ok(
-        ProcessedArgs {
-            time: hms_time.rebalanced(),
-            stopped_timer: stopped_timer,
-            play_sound: play_sound
-        }
-    )
+    Ok(ProcessedArgs {
+        time: hms_time.rebalanced(),
+        stopped_timer: stopped_timer,
+        play_sound: play_sound
+    })
 }
 
 /// Given an HmsTime, this function will freeze the program and terminal for
