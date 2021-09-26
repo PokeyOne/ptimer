@@ -8,6 +8,14 @@ use std::time::{Duration, Instant};
 use rodio::{OutputStream, Sink};
 use rodio::source::{SineWave, Source};
 
+/// The return result for the process_args function. This contains the actual
+/// time result, plus whether or not other arguments have been passed.
+struct ProcessedArgs {
+    time: HmsTime,
+    stopped_timer: bool,
+    play_sound: bool
+}
+
 /// A time construct for storing hours, minutes, and seconds as raw integers.
 /// This results in less of a time, but more accurately an inverval.
 ///
@@ -66,20 +74,27 @@ impl HmsTime {
         let (_stream, stream_handle) = OutputStream::try_default().unwrap();
         let sink = Sink::try_new(&stream_handle).unwrap();
 
-        let source = SineWave::new(440) // A
-            .take_duration(Duration::from_secs_f32(1.0))
-            .amplify(0.20);
-        sink.append(source);
+        for _ in [0, 1] {
+            let source = SineWave::new(440) // A
+                .take_duration(Duration::from_secs_f32(1.0))
+                .amplify(0.20);
+            sink.append(source);
 
-        let source = SineWave::new(330) // E
-            .take_duration(Duration::from_secs_f32(0.2))
-            .amplify(0.20);
-        sink.append(source);
+            let source = SineWave::new(330) // E
+                .take_duration(Duration::from_secs_f32(0.2))
+                .amplify(0.20);
+            sink.append(source);
 
-        let source = SineWave::new(440) // A
-            .take_duration(Duration::from_secs_f32(0.5))
-            .amplify(0.20);
-        sink.append(source);
+            let source = SineWave::new(440) // A
+                .take_duration(Duration::from_secs_f32(0.5))
+                .amplify(0.20);
+            sink.append(source);
+
+            let source = SineWave::new(0) // break
+                .take_duration(Duration::from_secs_f32(1.0))
+                .amplify(0.20);
+            sink.append(source);
+        }
 
         sink.sleep_until_end();
     }
@@ -89,7 +104,7 @@ impl HmsTime {
 ///
 /// # Errors
 /// The program will error if invalid argument syntax
-fn process_args(args: Vec<String>) -> Result<HmsTime, &'static str> {
+fn process_args(args: Vec<String>) -> Result<ProcessedArgs, &'static str> {
     if args.len() < 2 {
         return Err("Must provide at least one argument");
     }
@@ -97,6 +112,9 @@ fn process_args(args: Vec<String>) -> Result<HmsTime, &'static str> {
     let mut hours: u64 = 0;
     let mut minutes: u64 = 0;
     let mut seconds: u64 = 0;
+
+    let mut play_sound = true;
+    let mut stopped_timer = true;
 
     // Process all the arguments and add hours minutes and seconds as going
     // along. This is not implemented as a for loop because there are calls
@@ -130,6 +148,10 @@ fn process_args(args: Vec<String>) -> Result<HmsTime, &'static str> {
             } else {
                 return Err("-s must be followed by another argument");
             }
+        } else if args[i].eq("--silent") {
+            play_sound = false;
+        } else if args[i].eq("--exit-on-stop") {
+            stopped_timer = false;
         } else {
             seconds += args[i]
                 .parse::<u64>()
@@ -144,7 +166,14 @@ fn process_args(args: Vec<String>) -> Result<HmsTime, &'static str> {
         m: minutes,
         s: seconds
     };
-    Ok(hms_time.rebalanced())
+
+    Ok(
+        ProcessedArgs {
+            time: hms_time.rebalanced(),
+            stopped_timer: stopped_timer,
+            play_sound: play_sound
+        }
+    )
 }
 
 /// Given an HmsTime, this function will freeze the program and terminal for
@@ -236,16 +265,18 @@ fn main() {
 
     // NOTE: This is its own scope to make it clear that args is invalid after
     //       ownership is transferred to process_args
-    let time_value = {
+    let (time_value, show_stopped_timer, play_sound) = {
         let args: Vec<String> = env::args().collect();
 
-        match process_args(args) {
+        let proargs: ProcessedArgs = match process_args(args) {
             Ok(val) => val,
             Err(msg) => {
                 println!("{}", msg);
                 panic!();
             }
-        }
+        };
+
+        (proargs.time, proargs.stopped_timer, proargs.play_sound)
     };
 
     println!(
@@ -257,6 +288,12 @@ fn main() {
     );
 
     run_timer_for(&time_value);
-    time_value.play_completion_sound();
-    show_completed_timer();
+
+    if play_sound {
+        time_value.play_completion_sound();
+    }
+
+    if show_stopped_timer {
+        show_completed_timer();
+    }
 }
