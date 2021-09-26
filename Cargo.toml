@@ -1,6 +1,6 @@
 [package]
 name = "ptimer"
-version = "1.1.1"
+version = "1.2.0"
 authors = ["Mateo Carreras <mateo.carreras@gmail.com>"]
 description = "A command line interface for creating timers."
 readme = "README.md"
