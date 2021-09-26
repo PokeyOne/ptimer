@@ -1,6 +1,13 @@
 # ptimer
 A simple command-line timer application.
 
+1. [License](#License)
+1. [Dependencies](#Dependencies)
+1. [Documentation](#Documentation)
+1. [Code Style](#Code-Style)
+1. [Building from Source](#Building-from-Source)
+1. [Usage](#Usage)
+
 ## License
 
 [See the COPYING file](COPYING)
