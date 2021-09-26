@@ -7,45 +7,42 @@ A simple command-line timer application.
 
 ## Dependencies
 
-ptimer has no runtime dependencies, and the only build dependencies are
-`gcc` for building the C version and Rust for the Rust version.
+ptimer has no runtime dependencies, and the only build dependency is Rust.
 
 ## Building from Source
 
-There are 2 main versions of the program: the C version and the Rust vesrion.
-The C version is the original version and is not currently being updated or
-supported further. The Rust vesrion is the newest and greatest version of the
-program, and is therefore the recommended version.
+ptimer is built using Rust, which comes with its own handy cargo command which
+are quite useful. If you already have experience with cargo, it will behave
+in the expected way.
 
 Building has only been tested on macOS, however it should work on most linux
-distributions. The Rust version will most likely work on Windows using Cargo
-to generate builds, however the C version may need some experimenting with
-build systems to get working. Both the C and Rust versions only use their
-respective Standard libraries, so the code should be fairly portable.
+distributions and probably work on Windows.
 
-### Rust Version
-
-The Rust version can be built either manually using cargo, or using the `make`
+ptimer can be built either manually using cargo, or using the `make`
 command from the Makefile in the base of the repository.
 
-#### Makefile
+### Makefile
 
 From the base of the repository just type the command:
 ```
 make rust_build
+```
+or
+```
+make ptimer
 ```
 
 The resulting executable will be in __`./build/ptimer`__. This will be a release
 version of the executable and therefore in development it is recommend that
 you use `cargo run` to test changes.
 
-There is another make task called `install_rust_bin`, which simply copies the
-resulting binary to `/usr/local/bin/ptimer`. It is not recommended to run this
-make task without first knowing that that is exactly where you want it.
+There is another make task called `install_rust_bin` or simply `install_bin`, which
+copies the resulting binary to `/usr/local/bin/ptimer`. It is not recommended to
+run this make task without first knowing that that is exactly where you want it.
 
-#### Cargo
+### Cargo
 
-To build and run the program, navigate to `[repo_root]/rust_version/ptimer` and
+To build and run the program, navigate to project root and
 run the appropriate cargo command. If you are unfamiliar with cargo, this
 is probably:
 ```
@@ -57,23 +54,7 @@ If you want to generate a full executable file you could run:
 cargo build --release
 ```
 
-then the resulting executable will be in `[repo_root]/rust_version/ptimer/target/release/ptimer`
-
-### C Version (Deprecated)
-
-To build the C version of the program run the following command:
-```
-make ptimer
-```
-
-and the run use:
-```
-./build/ptimer
-```
-
-There is another make task called `install_bin`, which simple copies the
-resulting binary to `/usr/local/bin/ptimer`. It is not recommended to run this
-make task without first knowing that that is exactly where you want it.
+then the resulting executable will be in `[repo_root]/target/release/ptimer`
 
 ## Usage
 
