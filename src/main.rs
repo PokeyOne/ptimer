@@ -180,6 +180,9 @@ fn show_completed_timer() {
         }
     });
 
+    println!("Your time has completed. Below is the time since completion. \
+              Enter one of the following commands.");
+    println!("  (q) - Quit (default)");
     loop {
         // Sleep so we aren't updating the screen at unnecessary intervals
         sleep(Duration::from_millis(500));
@@ -193,7 +196,7 @@ fn show_completed_timer() {
 
         // Print the time on the same line
         let hms = HmsTime::from_seconds(wait_start_time.elapsed().as_secs());
-        print!("\r Stopped {} ago. Type q to quit:   ", hms.fmt());
+        print!("\r{}  ", hms.fmt());
         io::stdout().flush().unwrap();
     }
     println!("");
