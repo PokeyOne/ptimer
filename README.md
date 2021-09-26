@@ -9,6 +9,11 @@ A simple command-line timer application.
 
 ptimer has no runtime dependencies, and the only build dependency is Rust.
 
+## Documentation
+
+Documentation for the code can be generated through the `cargo doc --open`
+command.
+
 ## Building from Source
 
 ptimer is built using Rust, which comes with its own handy cargo command which
