@@ -1,8 +1,8 @@
 use std::env;
-use std::time::{Duration, Instant};
-use std::thread::sleep;
 use std::io;
 use std::io::Write;
+use std::thread::sleep;
+use std::time::{Duration, Instant};
 
 /// A time construct for storing hours, minutes, and seconds as raw integers.
 /// This results in less of a time, but more accurately an inverval.
@@ -20,7 +20,11 @@ impl HmsTime {
     /// will be rebalanced into the appropriate amount of hours, minutes,
     /// and seconds.
     fn from_seconds(seconds: u64) -> HmsTime {
-        let result = HmsTime {h: 0, m: 0, s: seconds};
+        let result = HmsTime {
+            h: 0,
+            m: 0,
+            s: seconds
+        };
 
         result.rebalanced()
     }
@@ -41,7 +45,11 @@ impl HmsTime {
         let wrapped_minutes = total_minutes % 60;
         let total_hours = (total_minutes - wrapped_minutes) / 60;
 
-        HmsTime {h: total_hours, m: wrapped_minutes, s: wrapped_seconds}
+        HmsTime {
+            h: total_hours,
+            m: wrapped_minutes,
+            s: wrapped_seconds
+        }
     }
 
     /// Format the time to something similar to "02:02:02"
@@ -70,7 +78,7 @@ fn process_args(args: Vec<String>) -> Result<HmsTime, &'static str> {
     while i < args.len() {
         if args[i].eq("-h") {
             if i < args.len() - 1 {
-                hours += args[i+1]
+                hours += args[i + 1]
                     .parse::<u64>()
                     .expect("Argument after -h must be a number");
                 i += 1;
@@ -79,7 +87,7 @@ fn process_args(args: Vec<String>) -> Result<HmsTime, &'static str> {
             }
         } else if args[i].eq("-m") {
             if i < args.len() - 1 {
-                minutes += args[i+1]
+                minutes += args[i + 1]
                     .parse::<u64>()
                     .expect("Argument after -m must be a number");
                 i += 1;
@@ -88,7 +96,7 @@ fn process_args(args: Vec<String>) -> Result<HmsTime, &'static str> {
             }
         } else if args[i].eq("-s") {
             if i < args.len() - 1 {
-                seconds += args[i+1]
+                seconds += args[i + 1]
                     .parse::<u64>()
                     .expect("Argument after -s must be a number");
                 i += 1;
@@ -104,7 +112,11 @@ fn process_args(args: Vec<String>) -> Result<HmsTime, &'static str> {
         i += 1;
     }
 
-    let hms_time: HmsTime = HmsTime { h: hours, m: minutes, s: seconds };
+    let hms_time: HmsTime = HmsTime {
+        h: hours,
+        m: minutes,
+        s: seconds
+    };
     Ok(hms_time.rebalanced())
 }
 
@@ -145,8 +157,13 @@ fn main() {
         }
     };
 
-    println!("Starting timer for {}h {}m {}s for a total of {}s", time_value.h, time_value.m, time_value.s, time_value.total_seconds());
-
+    println!(
+        "Starting timer for {}h {}m {}s for a total of {}s",
+        time_value.h,
+        time_value.m,
+        time_value.s,
+        time_value.total_seconds()
+    );
 
     run_timer_for(time_value);
 }
