@@ -5,6 +5,8 @@ use std::sync::mpsc;
 use std::thread;
 use std::thread::sleep;
 use std::time::{Duration, Instant};
+use rodio::{OutputStream, Sink};
+use rodio::source::{SineWave, Source};
 
 /// A time construct for storing hours, minutes, and seconds as raw integers.
 /// This results in less of a time, but more accurately an inverval.
@@ -57,6 +59,19 @@ impl HmsTime {
     /// Format the time to something similar to "02:02:02"
     fn fmt(&self) -> String {
         format!("{:02}:{:02}:{:02}", self.h, self.m, self.s)
+    }
+
+    /// Play a small sound when the timer completes
+    fn play_completion_sound(&self) {
+        let (_stream, stream_handle) = OutputStream::try_default().unwrap();
+        let sink = Sink::try_new(&stream_handle).unwrap();
+
+        let source = SineWave::new(440)
+            .take_duration(Duration::from_secs_f32(0.25))
+            .amplify(0.20);
+        sink.append(source);
+
+        sink.sleep_until_end();
     }
 }
 
@@ -125,7 +140,7 @@ fn process_args(args: Vec<String>) -> Result<HmsTime, &'static str> {
 /// Given an HmsTime, this function will freeze the program and terminal for
 /// the specified length of time. It will keep the time in the terminal updated
 /// live as it runs by using the special return character.
-fn run_timer_for(tv: HmsTime) {
+fn run_timer_for(tv: &HmsTime) {
     let totes: u64 = tv.total_seconds();
     let init_time = Instant::now();
 
@@ -231,7 +246,7 @@ fn main() {
         time_value.total_seconds()
     );
 
-    run_timer_for(time_value);
-
+    run_timer_for(&time_value);
+    time_value.play_completion_sound();
     show_completed_timer();
 }
