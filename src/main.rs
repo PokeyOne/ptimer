@@ -66,8 +66,18 @@ impl HmsTime {
         let (_stream, stream_handle) = OutputStream::try_default().unwrap();
         let sink = Sink::try_new(&stream_handle).unwrap();
 
-        let source = SineWave::new(440)
-            .take_duration(Duration::from_secs_f32(0.25))
+        let source = SineWave::new(440) // A
+            .take_duration(Duration::from_secs_f32(1.0))
+            .amplify(0.20);
+        sink.append(source);
+
+        let source = SineWave::new(330) // E
+            .take_duration(Duration::from_secs_f32(0.2))
+            .amplify(0.20);
+        sink.append(source);
+
+        let source = SineWave::new(440) // A
+            .take_duration(Duration::from_secs_f32(0.5))
             .amplify(0.20);
         sink.append(source);
 
