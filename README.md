@@ -14,6 +14,12 @@ ptimer has no runtime dependencies, and the only build dependency is Rust.
 Documentation for the code can be generated through the `cargo doc --open`
 command.
 
+## Code Style
+
+Mostly standard rustfmt style, with the exception of trailing commas.
+
+[See STYLE.md](STYLE.md)
+
 ## Building from Source
 
 ptimer is built using Rust, which comes with its own handy cargo command which
